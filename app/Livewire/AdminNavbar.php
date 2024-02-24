@@ -49,11 +49,7 @@ class AdminNavbar extends Component
         $this->dispatch('footer-text-color', data: $this->footer_text_color);
     }
 
-    public function logout()
-    {
-        Auth::logout();
-        return redirect('/login-admin')->with('status', 'Sesi anda telah habis! Silahkan login kembali');
-    }
+
 
     #[On('dark-mode')]
     public function setDarkMode()

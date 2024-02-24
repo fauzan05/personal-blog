@@ -9,5 +9,13 @@
         "axios": "^1.6.1",
         "laravel-vite-plugin": "^1.0.0",
         "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@ckeditor/ckeditor5-basic-styles": "^41.0.0",
+        "@ckeditor/ckeditor5-build-classic": "^41.0.0",
+        "@ckeditor/ckeditor5-ckfinder": "^41.0.0",
+        "@ckeditor/ckeditor5-essentials": "^41.0.0",
+        "@ckeditor/ckeditor5-image": "^41.0.0",
+        "@ckeditor/ckeditor5-paragraph": "^41.0.0"
     }
 }

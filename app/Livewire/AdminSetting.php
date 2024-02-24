@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -91,6 +92,7 @@ class AdminSetting extends Component
     public $account_type = 'instagram';
     public $account_link;
     public $application_settings;
+    public $show_title_state;
 
     public function mount()
     {
@@ -112,6 +114,7 @@ class AdminSetting extends Component
         $this->logo_filename = $this->applicationSettings['logo_filename'] ?? "Untitled";
         $this->email_blog = $this->applicationSettings['email'] ?? "example@mail.com";
         $this->phone_number_blog = $this->applicationSettings['phone_number'] ?? "08123456789";
+        $this->show_title_state = optional($this->applicationSettings)['show_blog_name'] ?? false;
         // User
         // dd(auth()->user());
         $this->user = auth()->user()->toArray();
@@ -146,7 +149,7 @@ class AdminSetting extends Component
     {
 
         Validator::make(['old_password' => $this->old_password], ['old_password' => 'required|string'])->validate();
-
+        $profile_filename = null;
         if (!empty($this->update_profile_image)) {
             $profile_filename = $this->update_profile_image->hashName();
             File::move($this->update_profile_image->getRealPath(), public_path('assets/user-profile-image/' . $profile_filename));
@@ -162,9 +165,8 @@ class AdminSetting extends Component
         $user->place_of_birth = !trim($this->place_of_birth) ? $user->place_of_birth : trim($this->place_of_birth);
         $user->date_of_birth = !trim($this->date_of_birth) ? $user->date_of_birth : trim($this->date_of_birth);
         $user->phone_number = !trim($this->phone_number) ? $user->phone_number : trim($this->phone_number);
-        $user->profile_photo_filename = !trim($this->profile_photo_filename) ? $user->profile_photo_filename : trim($this->profile_photo_filename);
+        $user->profile_photo_filename = !$profile_filename ? $user->profile_photo_filename : $profile_filename;
         $user->save();
-
         session()->flash('status_success', ['message' => 'Berhasil Mengubah Profil', 'color' => 'success']);
         $this->redirect('settings');
     }
@@ -176,7 +178,7 @@ class AdminSetting extends Component
             return session()->now('status_error', ['message' => 'Password Lama Salah', 'color' => 'danger']);
         }
         User::find($this->user['id'])->update([
-            'password' => $this->new_password
+            'password' => Hash::make($this->new_password)
         ]);
         session()->flash('status_success', ['message' => 'Berhasil Mengubah Password', 'color' => 'success']);
         $this->redirect('settings');
@@ -200,6 +202,7 @@ class AdminSetting extends Component
     {
         // dd($this->email_blog, $this->phone_number_blog);
         Validator::make(['blog_name' => $this->blog_name], ['blog_name' => 'required|string'])->validate();
+        $logo_filename = null;
         if (!empty($this->update_logo_image)) {
             $logo_filename = $this->update_logo_image->hashName();
             File::move($this->update_logo_image->getRealPath(), public_path('assets/logo/' . $logo_filename));
@@ -213,7 +216,8 @@ class AdminSetting extends Component
                 'footer_text_color' => $this->footer_text_color,
                 'logo_filename' => $this->logo_filename ? $logo_filename : $this->logo_filename,
                 'email' => $this->email_blog,
-                'phone_number' => $this->phone_number_blog
+                'phone_number' => $this->phone_number_blog,
+                'show_blog_name' => (boolean)$this->show_title_state
             ]);
         }
         if (!empty($this->applicationSettings)) {
@@ -225,7 +229,8 @@ class AdminSetting extends Component
                 'footer_text_color' => $this->footer_text_color,
                 'logo_filename' => empty($logo_filename) ? $this->logo_filename : $logo_filename,
                 'email' => $this->email_blog,
-                'phone_number' => $this->phone_number_blog
+                'phone_number' => $this->phone_number_blog,
+                'show_blog_name' => (boolean)$this->show_title_state
             ]);
         }
 
@@ -501,7 +506,7 @@ class AdminSetting extends Component
         $current_social_media = array_filter($this->social_medias, function ($social_media) use ($id) {
             return $social_media['id'] == $id;
         });
-
+        $current_social_media = reset($current_social_media);
         SocialMedia::where('id', $id)->update([
             'user_id' => $this->user['id'],
             'account_name' => !trim($name) ? $current_social_media['account_name'] : $name,

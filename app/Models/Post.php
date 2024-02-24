@@ -24,7 +24,8 @@ class Post extends Model
         'content',
         'location',
         'menu_id',
-        'slug'
+        'slug',
+        'show_image'
     ];
 
     public function user(): BelongsTo
@@ -42,9 +43,9 @@ class Post extends Model
         return $this->belongsToMany(Tag::class, 'post_tag');
     } 
 
-    public function comments(): BelongsTo
+    public function comments(): HasMany
     { 
-        return $this->belongsTo(Comment::class, 'post_id', 'id');
+        return $this->hasMany(Comment::class, 'post_id', 'id');
     }
 
     public function media(): HasMany

@@ -5,9 +5,11 @@ namespace App\Livewire;
 use App\Models\ApplicationSettings;
 use App\Models\Menu;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class NavbarComponent extends Component
 {
@@ -20,6 +22,10 @@ class NavbarComponent extends Component
     public $navbar_text_color;
     public $current_url;
     public $application_settings;
+    public $show_blog_name = false;
+    public $postTitle;
+
+    public $show_sidebar_state = false;
 
     public function mount()
     {
@@ -38,17 +44,36 @@ class NavbarComponent extends Component
         $this->application_settings = ApplicationSettings::first();
         $this->website_name = $this->application_settings->blog_name ?? "Untitled";
         $this->logo = $this->application_settings->logo_filename ?? "Untitled";
-        $this->navbar_color = $this->application_settings->navbar_color ?? "Untitled";
-        $this->navbar_text_color = $this->application_settings->navbar_text_color ?? "Untitled";
-        $this->dispatch('navbar-text-color', data: $this->navbar_text_color);
-        $this->dispatch('navbar-color', data: $this->navbar_color);    
+        $this->navbar_color = $this->application_settings->navbar_color ?? null;
+        $this->navbar_text_color = $this->application_settings->navbar_text_color ?? null;
+        $this->show_blog_name = $this->application_settings->show_blog_name ?? false;
+        if($this->navbar_color && $this->navbar_text_color) {
+            $this->dispatch('navbar-text-color', data: $this->navbar_text_color);
+            $this->dispatch('navbar-color', data: $this->navbar_color);    
+        }
     }
+
 
     #[On('dark-mode')]
     public function setDarkMode()
     {
-        Cookie::queue('dark-mode', (bool)!$this->darkModeState);
-        $this->darkModeState = !$this->darkModeState;
+        $this->show_sidebar_state = true;
+        $current_dark_mode_state = (bool)Cookie::get('dark-mode');
+        if(!$current_dark_mode_state) {
+            return Cookie::queue('dark-mode', (bool)!$current_dark_mode_state, 525600);
+        }
+        return Cookie::queue('dark-mode', false, 525600);
+    }
+
+    public function showSidebar()
+    {
+        $this->show_sidebar_state = !$this->show_sidebar_state;
+    }
+
+    public function searchPosts()
+    {
+        $url = url("/?search=$this->postTitle");
+        return redirect($url);
     }
     public function render()
     {

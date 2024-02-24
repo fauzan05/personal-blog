@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{asset('bootstrap-5.3.2-dist/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('fontawesome-free-6.4.2-web/css/all.css')}}">
+    <link rel="stylesheet" href="{{asset('css/imagestyle.css')}}">
+    <link rel="stylesheet" href="{{asset('css/codestyle.css')}}">
+    
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +17,9 @@
     <title>@yield('title')</title>
 </head>
 <body class="{{(boolean)Cookie::get('dark-mode') ? "dark" : ""}}">
+    <div class="button-to-up" id="buttonToTop">
+        <i class="fa-solid fa-chevron-up"></i>
+    </div>
     @include('layouts.app.header')
     @yield('content')
     @include('layouts.app.footer')

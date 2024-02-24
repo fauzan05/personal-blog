@@ -1,5 +1,5 @@
-@section('title', "Jelajah Buku - $title")
+@section('title', "$title_blog - $title_post")
 @extends('layouts.app')
 @section('content')
-    <livewire:content-page :content="$content">
+    <livewire:content-page :post_id="$post_id">
 @endsection

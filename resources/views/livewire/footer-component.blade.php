@@ -3,7 +3,7 @@
         class="row row-cols-1 justify-content-center align-items-center d-flex flex-column row-cols-sm-2 row-cols-md-5 pt-5 pb-5 ">
         <div class="col-lg-12 my-3 mb-5">
             <div class="row d-flex flex-row justify-content-center align-items-start">
-                <div class="col-lg-3 d-flex flex-column align-items-center justify-content-center">
+                <div class="col-lg-3 my-3 d-flex flex-column align-items-center justify-content-center">
                     <span style="font-size: 1.5rem; color: {{ $footer_text_color }}">Navigate</span>
                     <ul class="d-flex flex-column justify-content-center align-items-center list-unstyled">
                         @foreach ($menus as $menu)
@@ -16,7 +16,7 @@
                     </ul>
                 </div>
                 
-                <div class="col-lg-3 d-flex flex-column align-items-center justify-content-center" style="width: auto">
+                <div class="col-lg-3 my-3 d-flex flex-column align-items-center justify-content-center" style="width: auto">
                     <span style="font-size: 1.5rem; color: {{ $footer_text_color }}">Contact</span>
                     <div class="d-flex flex-column align-items-center justify-content-center">
                         <ul>
@@ -39,7 +39,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-3 d-flex flex-column align-items-center justify-content-center">
+                <div class="col-lg-3 my-3 d-flex flex-column align-items-center justify-content-center">
                     <span style="font-size: 1.5rem; color: {{ $footer_text_color }}">Social Media</span>
                     <div class="mt-3">
                         @foreach ($social_medias as $social_media)

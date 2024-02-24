@@ -38,16 +38,19 @@ class FooterComponent extends Component
         $this->logo = $this->application_settings->logo_filename ?? "Untitled";
         $this->phone_number = $this->application_settings->phone_number ?? "081234567890";
         $this->email = $this->application_settings->email ?? "Example@mail.com";
-        $this->footer_color = $this->application_settings->footer_color ?? "Untitled";
-        $this->footer_text_color = $this->application_settings->footer_text_color ?? "Untitled";
+        $this->footer_color = $this->application_settings->footer_color ?? null;
+        $this->footer_text_color = $this->application_settings->footer_text_color ?? null;
         $this->blog_name = $this->application_settings->blog_name ?? "Untitled";
         if(!empty($this->addresses)) {
             $this->main_address = array_filter($this->addresses, function($main_address) {
                 return (boolean)$main_address['is_active'] === true;
             });
         }
-        $this->dispatch('footer-text-color', data: $this->footer_text_color);
-        $this->dispatch('footer-color', data: $this->footer_color); 
+        if($this->footer_color && $this->footer_text_color) {
+            $this->dispatch('footer-text-color', data: $this->footer_text_color);
+            $this->dispatch('footer-color', data: $this->footer_color); 
+        }
+       
     }
 
     public function render()

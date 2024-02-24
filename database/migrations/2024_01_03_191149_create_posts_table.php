@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('content')->nullable(false);
             $table->string('location')->nullable(false);
             $table->string('slug')->nullable(false)->unique();
+            $table->boolean('show_image')->nullable(false)->default(true);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('categories');

@@ -21,35 +21,21 @@ class Login extends Component
     public $password;
     public $remember_me = false;
     public $message;
-    public $darkModeState;
 
     public function login()
     {
-        $this->validate();
-        
-        $user = User::where('email', $this->email)->first();
-
-        $response = Auth::attempt([
-            "email" => $this->email,
-            "password" => $this->password
-        ]);
-        if(!$user || !Hash::check($this->password, $user->password)) {
-            return session()->now('message', 'Email atau password salah');
+        $credentials = $this->validate();
+        $user = User::where('email', $this->email)->where('role', 'admin')->first();
+        if($user && !empty($user->password) && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user, true);
+            if((boolean)$this->remember_me) {
+                Cookie::queue('admin', auth()->user()->id, 525600); // setahun
+            }elseif(!(boolean)$this->remember_me) {
+                Cookie::queue('admin', auth()->user()->id, 4320); // 3 hari
+            }
+            return redirect()->intended('/admin/dashboard')->with('status', 'Login berhasil');
         }
-        Session::regenerate();
-       
-        if(!isset($_COOKIE['dark-mode'])) {
-            Cookie::queue('dark-mode', (boolean)false);
-        }
-        return redirect('/admin/dashboard')->with('status', 'Login berhasil');
-    }
-   
-
-    #[On('dark-mode')]
-    public function setDarkModeState()
-    {
-        Cookie::queue('dark-mode', (boolean)!$this->darkModeState);
-        $this->darkModeState = !$this->darkModeState;
+        return session()->now('message', 'Email atau password salah');
     }
 
     public function loginButton()

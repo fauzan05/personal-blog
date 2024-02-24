@@ -53,7 +53,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -77,19 +77,5 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        // 'user.login' => UserLoginMiddleware::class,
-        // 'username.exist' => UsernameIsExist::class,
-        // 'email.exist' => EmailIsExist::class,
-        // 'old.password' => OldPasswordValidation::class,
-        // 'user.id.exist' => UserIdIsExist::class,
-        // 'address.exist' => AddressIsExist::class, // by user_id,
-        // 'user.id.unique' => UserIdIsUnique::class,
-        // 'social.media.is.exist' => SocialMediaIsExist::class,
-        // 'tag.exist' => TagIsExist::class,
-        // 'category.exist' => CategoryIsExist::class,
-        // 'post.exist' => PostIsExist::class,
-        // 'media.exist' => MediaIsExist::class,
-        // 'menu.exist' => MenuIsExist::class,
-        'user.login' => UserHasLogin::class
     ];
 }

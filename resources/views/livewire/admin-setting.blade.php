@@ -170,7 +170,7 @@
                                         </div>
                                     @endif
                                     @if (empty($social_medias))
-                                        <div id="inputHelp" class="form-text text-center my-5">Sosial Media kosong.
+                                        <div id="inputHelp" class="form-text text-center my-5 ms-1">Sosial Media kosong.
                                             Silahkan
                                             buat.</div>
                                     @endif
@@ -355,6 +355,10 @@
                                                 <input type="text" wire:model="blog_name" class="form-control"
                                                     id="blog-name">
                                             </div>
+                                            <div class="col-md-12 mb-3 form-check form-switch d-flex flex-row justify-content-center">
+                                                <input class="form-check-input" wire:model="show_title_state" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                                                <label class="form-check-label" for="flexSwitchCheckChecked"> &nbsp Tampilkan Nama Blog Di Navbar</label>
+                                              </div>
                                             <div class="col-md-8">
                                                 <div class="input-group my-3">
                                                     <span class="input-group-text" id="basic-addon1">@</span>

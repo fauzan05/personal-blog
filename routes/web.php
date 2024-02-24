@@ -1,8 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MenuController;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +22,19 @@ use App\Http\Controllers\AuthController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+Route::post('image-upload', function (Request $request) {
+    if ($request->hasFile('upload')) {
+        $originName = $request->file('upload')->hashName();
+        $fileName = pathinfo($originName, PATHINFO_FILENAME);
+        $extension = $request->file('upload')->extension();
+        $fileName = $fileName . '.' . $extension;
+        $request->file('upload')->move(public_path('temp'), $fileName);
+        // $request->file('upload')->move(__DIR__ . '/../../Zoom', $fileName);
+        $url = asset('temp/' . $fileName);
+        return response()->json(['fileName' => $fileName, 'uploaded' => 1, 'url' => $url], Response::HTTP_OK);
+    }
+})->name('ckeditor.upload');
 
-Route::get('/not-found', function () {
-    return view('notfound');
-});
 Route::get('/login-admin', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('/admin/dashboard', function () {
@@ -36,15 +49,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/about', function () {
         return view('dashboards.admin.about');
     });
-    // Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/admin/logout', function (Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        Cookie::expire('admin');
+        return redirect('/login-admin')->with('status', 'Sesi anda telah habis! Silahkan login kembali');
+    });
 });
 
-Route::get('/', function () {
-    return view('app.index');
+Route::get('/forgot-password', function () {
+    return view('app.forgot-password');
 });
+
 // Route::get('/{mainpath}/{secondpath?}', function (string $mainpath, string $secondpath = null) {
 //     if (trim(strtolower($mainpath)) === 'about') {
 //         return view('app.about');
+//     }
+//     if($mainpath && !$secondpath) {
+//         dd(true);
 //     }
 //     // if (empty(trim(strtolower($secondpath))) && !empty(trim(strtolower($mainpath)))) {
 //     //     $response = Http::get(config('services.api_address') . "menu/$mainpath");
@@ -56,7 +79,7 @@ Route::get('/', function () {
 //     //     if(!$response['is_content']) {
 //     //         return view('app.home', ['main_path' => $mainpath]);
 //     //     }
-        
+
 //     //     return view('app.content', ['content' => $response['data']['data'][0], 'title' => $response['data']['data'][0]['title']]);
 //     // }
 //     if (!empty(trim(strtolower($secondpath))) && !empty(trim(strtolower($mainpath)))) {
@@ -67,16 +90,5 @@ Route::get('/', function () {
 // });
 
 
-
-
-Route::post('image-upload', function (Request $request) {
-    if ($request->hasFile('upload')) {
-        $originName = $request->file('upload')->hashName();
-        $fileName = pathinfo($originName, PATHINFO_FILENAME);
-        $extension = $request->file('upload')->extension();
-        $fileName = $fileName . '.' . $extension;
-        $request->file('upload')->move(public_path('temp'), $fileName);
-        $url = asset('temp/' . $fileName);
-        return response()->json(['fileName' => $fileName, 'uploaded' => 1, 'url' => $url]);
-    }
-})->name('ckeditor.upload');
+Route::get('/{mainpath}/{secondpath?}/{thirdpath?}/{fourthpath?}', [MenuController::class, 'redirectTo']);
+Route::get('/', [AuthController::class, 'profile'])->name('profile');

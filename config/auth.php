@@ -39,6 +39,7 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            'expire' => '525600'
         ],
         'api' => [
             'driver' => 'passport',

@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="row d-flex flex-row no-padding align-items-start justify-content-center">
-        <div class="col-lg-8 d-flex card flex-column justify-content-center align-items-center me-3">
+        <div class="col-lg-12 d-flex card flex-column justify-content-center align-items-center">
             <span class="create-post my-3">{{ $configState ? 'Edit Postingan' : 'Buat Postingan' }}</span>
             <hr class="no-padding" style="width: 80%">
             @if (session('post_title_conflict'))
@@ -56,6 +56,12 @@
                             <span class="error text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-check form-switch mb-3">
+                        <input wire:model="show_image_state" class="form-check-input" type="checkbox" role="switch"
+                            id="flexSwitchCheckChecked">
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Tampilkan Gambar Utama Di
+                            Postingan</label>
+                    </div>
                     @if ($configState)
                         <div class="d-flex flex-column my-3">
                             <span>Pratinjau</span>
@@ -64,6 +70,7 @@
                                 alt="Gambar Pratinjau" style="width: 150px;">
                         </div>
                     @endif
+
                     <div wire:ignore style="width: 100% !important;">
                         <label for="body-update" class="form-label">Bodi</label>
                         <div>
@@ -71,9 +78,18 @@
                                 style="width: 100% !important;"></textarea>
                         </div>
                     </div>
+                    {{-- <div wire:ignore style="width: 100% !important;">
+                        <label for="body-update" class="form-label">Bodi</label>
+                        
+                        <div>
+                            <textarea class="form-control" id="body" wire:model.defer="{{ $configState ? 'body_update' : 'body' }}"
+                                style="width: 100% !important;"></textarea>
+                        </div>
+                    </div>
+                    --}}
                     @error('body')
                         <span class="error text-danger">{{ $message }}</span>
-                    @enderror
+                    @enderror 
                     @if ($configState)
                         <div class="d-flex flex-column my-3">
                             <span class="created-at">Dibuat : {{ !empty($created_at) ? $created_at : ' -' }}</span>
@@ -99,8 +115,8 @@
                     @endif
             </div>
         </div>
-        <div class="col-lg-3" style="height: auto;">
-            <div class="row d-flex flex-column">
+        <div class="col-lg-12 mt-5" style="width: 100%; height: auto;">
+            <div class="row d-flex flex-row">
                 @if ($configState)
                     <div
                         class="col-lg-12 container card d-flex flex-column justify-content-center align-items-center mb-5">
@@ -177,7 +193,7 @@
                                     style="width: 100%">
                                     <div class="form-check">
                                         @if (!$optionTagState)
-                                            @if (!$selected_post_state) 
+                                            @if (!$selected_post_state)
                                                 {{-- Jika tidak ada pembungkus, maka error karena selected_tag properti yang bersifat array --}}
                                                 <div>
                                                     <input class="form-check-input"
@@ -193,34 +209,37 @@
                                                         $tagPrinted = false;
                                                     @endphp
                                                     {{-- {{dd($update_current_tag[$tag['id']]['name'])}} --}}
-                                                        @if ( isset($update_current_tag[$tag['id']]) &&  is_array($update_current_tag[$tag['id']]) &&  $tag['id'] ==  $update_current_tag[$tag['id']]['id'])
-                                                            <div class="d-flex flex-row justify-content-between gap-3 align-items-center my-1"
-                                                                style="width: 100%">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input"
-                                                                        wire:model="update_current_tag.{{ $tag['id'] }}"
-                                                                        type="checkbox"
-                                                                        id="flexCheckDefault{{ $tag['id'] }}"
-                                                                        style="transition: var(--tran-05)" checked>
-                                                                    <label class="form-check-label"
-                                                                        for="flexCheckDefault{{ $tag['id'] }}">
-                                                                        {{ $update_current_tag[$tag['id']]['name'] }}
-                                                                </div>
+                                                    @if (isset($update_current_tag[$tag['id']]) &&
+                                                            is_array($update_current_tag[$tag['id']]) &&
+                                                            $tag['id'] == $update_current_tag[$tag['id']]['id']
+                                                    )
+                                                        <div class="d-flex flex-row justify-content-between gap-3 align-items-center my-1"
+                                                            style="width: 100%">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input"
+                                                                    wire:model="update_current_tag.{{ $tag['id'] }}"
+                                                                    type="checkbox"
+                                                                    id="flexCheckDefault{{ $tag['id'] }}"
+                                                                    style="transition: var(--tran-05)" checked>
+                                                                <label class="form-check-label"
+                                                                    for="flexCheckDefault{{ $tag['id'] }}">
+                                                                    {{ $update_current_tag[$tag['id']]['name'] }}
                                                             </div>
-                                                            @php
-                                                                $tagPrinted = true;
-                                                            @endphp
-                                                        @endif
+                                                        </div>
+                                                        @php
+                                                            $tagPrinted = true;
+                                                        @endphp
+                                                    @endif
                                                     @if (!$tagPrinted)
-                                                    <div>
-                                                        <input class="form-check-input"
-                                                        wire:model="update_current_tag.{{ $tag['id'] }}"
-                                                        type="checkbox" id="tag{{ $tag['id'] }}"
-                                                        style="transition: var(--tran-05)">
-                                                    <label class="form-check-label" for="tag{{ $tag['id'] }}">
-                                                        {{ $tag['name'] }}
-                                                    </div>
-                                                        
+                                                        <div>
+                                                            <input class="form-check-input"
+                                                                wire:model="update_current_tag.{{ $tag['id'] }}"
+                                                                type="checkbox" id="tag{{ $tag['id'] }}"
+                                                                style="transition: var(--tran-05)">
+                                                            <label class="form-check-label"
+                                                                for="tag{{ $tag['id'] }}">
+                                                                {{ $tag['name'] }}
+                                                        </div>
                                                     @endif
                                                 </div>
                                             @endif
@@ -247,7 +266,7 @@
                                                         </button>
                                                     @endif
                                                     <button id="save-tag" type="button"
-                                                        wire:click="editTag({{$key}})"
+                                                        wire:click="editTag({{ $key }})"
                                                         class="btn btn-success save-tag btn-sm d-flex flex-row">
                                                         <i class="fa-solid fa-check"></i>
                                                         &nbsp
@@ -292,7 +311,8 @@
                             @endif
                         </button>
                     </div>
-                    <div id="inputHelp" class="form-text my-3" style="width: 80%">Catatan: <br> Tag yang sudah
+                    <div id="inputHelp" class="form-text my-3 text-center" style="width: 80%">Catatan: <br> Tag yang
+                        sudah
                         dipakai di post lain tidak bisa dihapus. Nama Tag tidak boleh sama.</div>
                     @if ($createTagState)
                         </form>
@@ -445,7 +465,8 @@
                             @endif
                         </button>
                     </div>
-                    <div id="inputHelp" class="form-text my-3" style="width: 80%">Catatan: <br> Kategori yang
+                    <div id="inputHelp" class="form-text my-3 text-center" style="width: 80%">Catatan: <br> Kategori
+                        yang
                         sudah
                         dipakai di post lain tidak bisa dihapus. Nama Kategori tidak boleh sama.</div>
                     @if (session('create_category_status'))
@@ -512,11 +533,12 @@
                         <span class="error text-danger text-center">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-lg-12 d-flex mb-5 flex-column justify-content-center align-items-center card">
+                {{-- <div class="col-lg-12 d-flex mb-5 flex-column justify-content-center align-items-center card">
                     <span class="choose-address my-2">Pilih Lokasi</span>
                     <hr class="no-padding" style="width: 80%">
                     @if ($selected_post_state)
-                        <div id="inputHelp" class="form-text d-flex flex-colum align-items-center" style="width: 80%">Lokasi Sekarang : <br>
+                        <div id="inputHelp" class="form-text d-flex flex-colum align-items-center"
+                            style="width: 80%">Lokasi Sekarang : <br>
                             {{ $update_custom_address }}
                         </div>
                     @endif
@@ -563,7 +585,7 @@
                     </button>
                     @if ($createLocationState)
                         {{-- <livewire:mini-create-address> --}}
-                        <div class="d-flex flex-column align-items-center justify-content-center my-4">
+                {{-- <div class="d-flex flex-column align-items-center justify-content-center my-4">
                             <div class="mb-3" style="width: 80%">
                                 <label for="input1" class="form-label">Masukkan Lokasi</label>
                                 <input type="text"
@@ -572,7 +594,7 @@
                                 <div id="inputHelp" class="form-text">Masukkan nama lokasi secara kustom</div>
                                 @error('custom_address')
                                     <span class="error text-danger">{{ $message }}</span>
-                                @enderror
+                            @enderror
                                 @error('update_custom_address')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
@@ -590,18 +612,48 @@
                                 kustom lokasi, bukan yang berada di opsi lokasi</div>
                         </div>
                     @endif
-                </div>
+                </div>  --}}
             </div>
+
+            {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+
         </div>
-        @if (!$createLocationState && !$createCategoryState && !$createTagState)
+        @if (!$createCategoryState && !$createTagState)
             </form>
         @endif
     </div>
 </div>
 
-@script
-    <script>
-        ClassicEditor
+{{-- <script>
+    function initializeCKEditor() {
+       ClassicEditor
+          .create(document.querySelector('#body'), {
+             ckfinder: {
+                uploadUrl: 'http://127.0.0.1:8000/image-upload?_token=UgcJRRoNleVEud8Em45rjCmPBH1B3yTPwyrqR8la',
+             }
+          })
+          .then(editor => {
+             MyEditor = editor;
+             editor.model.document.on('change:data', () => {
+                let body_content = editor.getData();
+                Livewire.dispatch('body', {
+                   data: body_content
+                });
+                Livewire.dispatch('body-updated', {
+                   data: body_content
+                });
+             });
+          })
+          .catch(error => {
+             console.error(error);
+          });
+    }
+ 
+    setTimeout(initializeCKEditor, 1000); // Adjust the delay as needed
+ </script> --}}
+{{-- 
+ <script>
+    ClassicEditor
             .create(document.querySelector('#body'), {
                 ckfinder: {
                     uploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}"
@@ -624,6 +676,60 @@
                 // editor.setData(contentBody)
             })
             .catch(error => {
+                console.error(error);
+            });
+        Livewire.on("selected", (data) => {
+            MyEditor.setData(data.data);
+        })
+        Livewire.on("reset-body", (data) => {
+            MyEditor.setData(data.data);
+        })
+</script> --}}
+
+<script src="{{ asset('assets/vendor/ckeditor5/build/ckeditor.js') }}"></script>
+@script
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#body'), {
+
+                fontSize: {
+                    options: [
+                        'default',
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17,
+                        18,
+                        19,
+                        20,
+                        25,
+                    ]
+                },
+                // toolbar: [ 'resizeImage'],
+                ckfinder: {
+                    uploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}"
+                },
+            })
+            .then(editor => {
+                MyEditor = editor;
+                editor.model.document.on('change:data', () => {
+                    // let body = document.getElementById('body').getAttribute('data-body')
+                    // eval(body).set('body', document.getElementById('body').value)
+                    // console.log(editor.getData())
+                    let body_content = editor.getData()
+                    Livewire.dispatch('body', {
+                        data: body_content
+                    })
+                    Livewire.dispatch('body-updated', {
+                        data: body_content
+                    })
+                });
+                // editor.setData(contentBody)
+            }).catch(error => {
                 console.error(error);
             });
         Livewire.on("selected", (data) => {

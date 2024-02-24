@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\Attributes\On;
@@ -51,6 +52,7 @@ class AdminPost extends Component
     public $optionCategoryState = false;
     public $update_tag = [];
     public $update_category = [];
+    public $show_image_state = false;
     // Config Mode
     public $current_post_id = 0;
     public $configState = false;
@@ -76,6 +78,7 @@ class AdminPost extends Component
     public $showPostsModeState = false;
     public $searchPostState = false;
     public $filterPostState = false;
+    public $show_ckeditor_state = true;
 
     protected $rules = [
         'body' => 'required|string|min:1',
@@ -89,6 +92,12 @@ class AdminPost extends Component
         $this->user_id = auth()->user()->id;
         $this->getAllData();
         $this->update_current_tag = $this->tags;
+    }
+
+    public function showCkEditor()
+    {
+        $this->show_ckeditor_state = !$this->show_ckeditor_state;
+        $this->dispatch('show-ckeditor');
     }
 
     public function configMode()
@@ -114,6 +123,7 @@ class AdminPost extends Component
         $this->reset('updated_at');
         $this->reset('update_image');
         $this->reset('image');
+        $this->reset('show_image_state');
         $this->getAllPosts();
     }
 
@@ -129,6 +139,7 @@ class AdminPost extends Component
         // $this->createCategoryState = !$this->createCategoryState;
         // $this->createTagState = !$this->createTagState;
     }
+
     public function setCreateCategoryState()
     {
         $this->createCategoryState = !$this->createCategoryState;
@@ -136,6 +147,7 @@ class AdminPost extends Component
         // $this->createTagState = !$this->createTagState;
         $this->reset('category');
     }
+
     public function setCreateTagState()
     {
         $this->createTagState = !$this->createTagState;
@@ -190,11 +202,18 @@ class AdminPost extends Component
 
     public function post()
     {
+        // $selected_address = null;
         Validator::make(
             ['title' => $this->title],
             ['title' => 'required|string|max:50'],
             ['title.max' => 'Panjang judul maksimum :max karakter']
         )->validate();
+
+        Validator::make(['image' => $this->image], ['image' => 'required|image|min:10|max:20000'], ['required' => 'Postingan wajib memiliki gambar utama, jika tidak ada buat terlebih dahulu'])->validate();
+        Validator::make(['body' => $this->body], ['body' => 'required|string'], ['required' => 'Postingan wajib memiliki konten bodi, jika tidak ada buat terlebih dahulu'])->validate();
+        Validator::make(['selected_tag' => $this->selected_tag], ['selected_tag' => 'required|array'], ['required' => 'Postingan wajib memiliki tag, jika tidak ada buat terlebih dahulu'])->validate();
+        Validator::make(['selected_category' => $this->selected_category], ['selected_category' => 'required|integer'], ['required' => 'Postingan wajib memiliki kategori, jika tidak ada buat terlebih dahulu'])->validate();
+        Validator::make(['selected_menu' => $this->selected_menu], ['selected_menu' => 'required|integer'], ['required' => 'Postingan wajib memiliki menu, jika tidak ada buat terlebih dahulu'])->validate();
 
         if (empty($this->tags)) {
             Validator::make(['selected_tag' => $this->selected_tag], ['selected_tag' => 'required|array'], ['required' => 'Postingan wajib memiliki tag, jika tidak ada buat terlebih dahulu'])->validate();
@@ -202,29 +221,27 @@ class AdminPost extends Component
         if (empty($this->categories)) {
             Validator::make(['selected_category' => $this->selected_category], ['selected_category' => 'required|integer'], ['required' => 'Postingan wajib memiliki kategori, jika tidak ada buat terlebih dahulu'])->validate();
         }
-        if (empty($this->addresses)) {
-            $this->createLocationState = true;
-            Validator::make(['custom_address' => $this->custom_address], ['custom_address' => 'required|string'], ['required' => 'Postingan wajib memiliki alamat, jika tidak ada buat terlebih dahulu'])->validate();
-        }
-        $this->validate();
-        Validator::make(['selected_address' => $this->selected_address], ['selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
+        // if (empty($this->addresses)) {
+        //     $this->createLocationState = true;
+        //     Validator::make(['custom_address' => $this->custom_address], ['custom_address' => 'required|string'], ['required' => 'Postingan wajib memiliki alamat, jika tidak ada buat terlebih dahulu'])->validate();
+        // }
+        // $this->validate();
+        // Validator::make(['selected_address' => $this->selected_address], ['selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
 
-        // mencari id address pada property selected_address, setelah itu dibuat menjadi string
-        if (!$this->createLocationState) {
-            $selected_address = '';
-            foreach ($this->addresses as $key => $address) :
-                if ($address['id'] == $this->selected_address) {
-                    $selected_address = $address['province'] . ', ' . $address['country'];
-                }
-            endforeach;
-        }
-
+        // // mencari id address pada property selected_address, setelah itu dibuat menjadi string
+        // if (!$this->createLocationState) {
+        //     $selected_address = '';
+        //     foreach ($this->addresses as $key => $address) :
+        //         if ($address['id'] == $this->selected_address) {
+        //             $selected_address = $address['province'] . ', ' . $address['country'];
+        //         }
+        //     endforeach;
+        // }
         // memindahkan file dari temp ke images
         $images_filename = [];
-        $pattern = '/src="http:\/\/127.0.0.1:8001\/temp\/([^"]+)"/';
+        $pattern = '/src="http:\/\/127.0.0.1:8000\/temp\/([^"]+)"/';
         if (preg_match_all($pattern, $this->body, $matches)) {
             $images_filename = $matches;
-            // dd($images_filename);
         }
         foreach ($images_filename as $key => $image_filename) :
             if ($key === 1) {
@@ -250,7 +267,9 @@ class AdminPost extends Component
             'title' => trim($this->title),
             'content' => $this->body,
             'slug' => Str::slug($this->title, '-'),
-            'location' => $this->createLocationState ? $this->custom_address : $selected_address,
+            'show_image' => (boolean) $this->show_image_state,
+            // 'location' => $this->createLocationState ? $this->custom_address : $selected_address,
+            'location' => "kosong"
         ]);
 
         foreach (array_keys($this->selected_tag) as $tag) :
@@ -457,7 +476,7 @@ class AdminPost extends Component
         $this->posts = Post::with(['category', 'tags', 'menu', 'media'])->get()->toArray();
         $this->posts = array_map(function ($post) {
             $category = Category::find($post['category_id']);
-            $tag = Post::find($post['id'])->tags;
+            $tags = Post::find($post['id'])->tags;
             $menu = Menu::find($post['menu_id']);
             $media = Media::where('post_id', $post['id'])->first();
             $updatedAt = Carbon::parse($post['updated_at'])->setTimezone('Asia/Jakarta')->format('l, j F Y H:i:s');
@@ -466,13 +485,14 @@ class AdminPost extends Component
                 'id' => $post['id'],
                 'user_id' => $post['user_id'],
                 'category' => $category ? $category->toArray() : null,
-                'tag' => $tag ? $tag->toArray() : null,
+                'tag' => $tags ? $tags->toArray() : null,
                 'menu' => $menu ? $menu->toArray() : null,
                 'title' => $post['title'],
                 'content' => $post['content'],
                 'location' => $post['location'],
                 'slug' => $post['slug'],
                 'image' => $media ? $media->name : null,
+                'show_image' => (boolean)$post['show_image'],
                 'created_at' => $createdAt,
                 'updated_at' => $updatedAt,
             ];
@@ -482,7 +502,6 @@ class AdminPost extends Component
 
     public function selectedPost($id)
     {
-
         $this->reset('update_current_tag');
         if ($this->selected_post_id != $id) {
             $this->selected_post_id = $id;
@@ -518,11 +537,13 @@ class AdminPost extends Component
         $this->created_at = $this->selected_post['created_at'];
         $this->updated_at = $this->selected_post['updated_at'];
         $this->update_custom_address = $this->selected_post['location'];
+        $this->show_image_state = (boolean)$this->selected_post['show_image'];
         $this->dispatch('selected', data: $this->body_update);
     }
 
     public function editPost()
     {
+        // dd($this->body_update);
         //    dd($this->update_current_category);
         // dd(array_keys($this->selected_post['tag']), array_keys($this->update_current_tag));
         // $selected_tag_filter = array_filter($this->update_current_tag, function ($var) {
@@ -542,6 +563,8 @@ class AdminPost extends Component
         //     $this->update_current_tag,
         //     $this->update_current_address
         // );
+
+
         Validator::make(
             ['update_title' => $this->update_title],
             ['update_title' => 'required|string|max:50'],
@@ -556,51 +579,52 @@ class AdminPost extends Component
         if (empty($this->update_current_category)) {
             Validator::make(['update_current_category' => $this->update_current_category], ['update_current_category' => 'required|integer'], ['required' => 'Postingan wajib memiliki kategori, jika tidak ada buat terlebih dahulu'])->validate();
         }
+
+
         // // membuat lokasi custom
         // if (empty($this->addresses)) {
         //     $this->createLocationState = true;
         //     Validator::make(['update_current_address' => $this->update_current_address], ['update_current_address' => 'required|string'], ['required' => 'Postingan wajib memiliki alamat, jika tidak ada buat terlebih dahulu'])->validate();
         // }
         // membuat lokasi berdasarkan list alamat yang ada di radio button
-        if (!empty($this->update_selected_address)) {
-            Validator::make(['update_selected_address' => $this->update_selected_address], ['update_selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
-            $selected_address = $this->update_custom_address;
-        }
+        // if (!empty($this->update_selected_address)) {
+        //     Validator::make(['update_selected_address' => $this->update_selected_address], ['update_selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
+        //     $selected_address = $this->update_custom_address;
+        // }
         // jika user tidak mengisi manual dan lebih memilih daftar alamat yang tersedia di radio button
         // akan mencari id address pada property selected_address, setelah itu dibuat menjadi string
-        if (!$this->createLocationState) {
-            // dd($this->update_selected_address, $this->addresses);
-            if(!empty($this->update_selected_address)) {
-                $selected_address = '';
-                foreach ($this->addresses as $key => $address) :
-                    if ($address['id'] == $this->update_selected_address) {
-                        $selected_address = $address['province'] . ', ' . $address['country'];
-                    }
-                endforeach;
-            }else{
-                $selected_address = $this->update_custom_address;
-            }
+        // if (!$this->createLocationState) {
+        //     // dd($this->update_selected_address, $this->addresses);
+        //     if(!empty($this->update_selected_address)) {
+        //         $selected_address = '';
+        //         foreach ($this->addresses as $key => $address) :
+        //             if ($address['id'] == $this->update_selected_address) {
+        //                 $selected_address = $address['province'] . ', ' . $address['country'];
+        //             }
+        //         endforeach;
+        //     }else{
+        //         $selected_address = $this->update_custom_address;
+        //     }
             
-        }
+        // }
 
         // memindahkan file dari temp ke images
         $images_filename = [];
-        $pattern = '/src="http:\/\/127.0.0.1:8001\/temp\/([^"]+)"/';
-        if (preg_match_all($pattern, $this->body, $matches)) {
+        $pattern = '/src="http:\/\/127.0.0.1:8000\/temp\/([^"]+)"/';
+        if (preg_match_all($pattern, $this->body_update, $matches)) {
             $images_filename = $matches;
-            // dd($images_filename);
         }
 
         foreach ($images_filename as $key => $image_filename) :
-            if ($key === 1) {
-                foreach ($image_filename as $item) :
+            if ($key === 1) { //mengambil nama gambar
+                foreach ($image_filename as $item):
                     // $image_path = public_path('temp/' . $item);
                     File::move(public_path('temp/' . $item), public_path('assets/images/' . $item));
                 endforeach;
             }
         endforeach;
         // ubah lokasi dari temp ke images
-        $this->body = str_replace('/temp/', '/assets/images/', $this->body);
+        $this->body_update = str_replace('/temp/', '/assets/images/', $this->body_update);
 
         $other_post_accurate = Post::where('title', trim($this->update_title))->first();
         $other_post = Post::where('title', 'like', '%' . trim($this->update_title) . '%')->first();
@@ -613,7 +637,9 @@ class AdminPost extends Component
             'title' => trim($this->update_title),
             'content' => $this->body_update,
             'slug' => Str::slug($this->update_title, '-'),
-            'location' => $this->createLocationState ? $this->update_custom_address : $selected_address,
+            'show_image' => (boolean) $this->show_image_state,
+            // 'location' => $this->createLocationState ? $this->update_custom_address : $selected_address,
+            'location' => "kosong",
         ]);
 
         // menghapus semua tag yang ada di postingan yang dipilih
@@ -636,7 +662,8 @@ class AdminPost extends Component
             // File image upload
             $type = $this->update_image->extension();
             $filename = $this->update_image->hashName();
-            File::move($this->update_image->getRealPath(), public_path('assets/images/' . $filename));
+            // File::move($this->update_image->getRealPath(), public_path('assets/images/' . $filename));
+            File::move($this->update_image->getRealPath(), __DIR__ . "/../../../Zoom/" . $filename);
             $post_id = $this->selected_post['id'];
             $path = public_path('assets/images' . $filename);
             Media::where('post_id', $post_id)->update([
@@ -663,8 +690,8 @@ class AdminPost extends Component
         }
         $this->posts = Post::search($this->searchTitle)->toArray();
         $this->posts = array_map(function ($post) {
-            $createdAt = \Carbon\Carbon::parse($post['created_at']);
-            $updatedAt = \Carbon\Carbon::parse($post['updated_at']);
+            $createdAt = Carbon::parse($post['created_at']);
+            $updatedAt = Carbon::parse($post['updated_at']);
             return [
                 'id' => $post['id'],
                 'user_id' => $post['user_id'],
