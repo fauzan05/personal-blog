@@ -402,7 +402,7 @@ class AdminPost extends Component
             return $category['id'] == $id;
         });
         $current_category_name = reset($current_category_name)['name'];
-        Category::find($id)->delete($id);
+        Category::find($id)->delete();
         $this->getCategories();
         session()->now('category_status', ['message' => "Berhasil menghapus kategori $current_category_name", 'color' => 'success']);
     }
