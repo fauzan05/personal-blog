@@ -7,11 +7,7 @@ use App\Models\Comment;
 use App\Models\Note;
 use App\Models\Post;
 use App\Models\Tag;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Http;
 use Livewire\Component;
-use Livewire\Attributes\On;
 
 class AdminHome extends Component
 {

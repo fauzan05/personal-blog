@@ -5,11 +5,9 @@ namespace App\Livewire;
 use App\Models\ApplicationSettings;
 use App\Models\Menu;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class NavbarComponent extends Component
 {

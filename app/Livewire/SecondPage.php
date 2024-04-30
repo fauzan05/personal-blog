@@ -2,13 +2,11 @@
 
 namespace App\Livewire;
 
-use App\Models\ApplicationSettings;
 use App\Models\Comment;
 use App\Models\Media;
 use App\Models\Post;
 use Carbon\Carbon;
 use Livewire\Component;
-use Illuminate\Support\Facades\Http;
 
 class SecondPage extends Component
 {

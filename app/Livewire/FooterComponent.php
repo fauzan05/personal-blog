@@ -6,8 +6,6 @@ use App\Models\Address;
 use App\Models\ApplicationSettings;
 use App\Models\Menu;
 use App\Models\SocialMedia;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
 class FooterComponent extends Component

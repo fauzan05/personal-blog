@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Enum\UserRoleEnum;
 use App\Models\Comment;
-use App\Models\Media;
 use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
@@ -12,7 +11,6 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
-use Livewire\Attributes\Validate;
 
 class ContentPage extends Component
 {

@@ -3,9 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\ApplicationSettings;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Http;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AdminAbout extends Component

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ApplicationSettings;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ApplicationSettingsSeeder extends Seeder
@@ -13,7 +12,7 @@ class ApplicationSettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        $application_settings = ApplicationSettings::create([
+        ApplicationSettings::create([
             'app_version' => '1.0.0',
             'blog_name' => 'Jelajah Buku',
             'navbar_color' => 'var(--body-color)',

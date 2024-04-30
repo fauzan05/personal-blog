@@ -3,9 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ApplicationSettings;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
 use Livewire\Attributes\On;
 use Livewire\Component;

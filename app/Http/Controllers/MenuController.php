@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PostResource;
 use App\Models\ApplicationSettings;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Post;
-use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
@@ -102,73 +100,5 @@ class MenuController extends Controller
         }
 
         return view('notfound');
-    }
-    public function create(Request $request)
-    {
-        $response = Menu::create([
-            'name' => $request->name
-        ]);
-        return response()->json(
-            [
-                'status' => 'success',
-                'code' => 201,
-                'message' => 'The menu has been successfully created',
-                'api_version' => 'v1',
-                'data' => $response,
-                'error' => null,
-            ],
-            201,
-        );
-    }
-
-    public function update(int $id, Request $request)
-    {
-        $response = Menu::where('id', $id)->update([
-            'name' => $request->name_update
-        ]);
-        $response = Menu::find($id);
-        return response()->json(
-            [
-                'status' => 'success',
-                'code' => 200,
-                'message' => 'The menu has been successfully updated',
-                'api_version' => 'v1',
-                'data' => $response,
-                'error' => null,
-            ],
-            200,
-        );
-    }
-
-    public function show()
-    {
-        $response = Menu::all();
-        return response()->json(
-            [
-                'status' => 'success',
-                'code' => 200,
-                'message' => 'The menu has been successfully showed',
-                'api_version' => 'v1',
-                'data' => $response,
-                'error' => null,
-            ],
-            200,
-        );
-    }
-
-    public function delete(int $id)
-    {
-        $response = Menu::find($id)->delete();
-        return response()->json(
-            [
-                'status' => 'success',
-                'code' => 200,
-                'message' => 'The menu has been successfully deleted',
-                'api_version' => 'v1',
-                'data' => $response,
-                'error' => null,
-            ],
-            200,
-        );
     }
 }
