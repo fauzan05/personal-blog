@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cookie;
 //     return view('welcome');
 // });
 Route::post('image-upload', function (Request $request) {
+    // upload adalah nama default dari kolom data yang diberikan oleh CKEditor
     if ($request->hasFile('upload')) {
         $originName = $request->file('upload')->hashName();
         $fileName = pathinfo($originName, PATHINFO_FILENAME);

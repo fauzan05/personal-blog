@@ -41,6 +41,7 @@ class FooterComponent extends Component
         $this->footer_color = $this->application_settings->footer_color ?? null;
         $this->footer_text_color = $this->application_settings->footer_text_color ?? null;
         $this->blog_name = $this->application_settings->blog_name ?? "Untitled";
+        
         if(!empty($this->addresses)) {
             $this->main_address = array_filter($this->addresses, function($main_address) {
                 return (boolean)$main_address['is_active'] === true;

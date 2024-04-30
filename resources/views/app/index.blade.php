@@ -20,12 +20,7 @@ $app = App\Models\ApplicationSettings::select('blog_name')->first()->blog_name ?
                     <div class="col-lg-12 col-md-12 col-sm-12 col-12 d-flex mt-2 flex-column align-items-center wrapper-content-index"
                         style="line-height: 1.5cm; width: 100%;">
                         <p class="content-index m-4 pt-3">
-                            Halo pembaca yang budiman. Selamat datang di blog Jelajah Buku. Seperti namanya, blog ini berisi
-                            tentang
-                            informasi buku, tempat perbukuan, dan para penulis buku. Tapi tidak cuma itu, blog ini juga
-                            menceritakan penulis
-                            dalam menjalani hidup. Layaknya buku akan selalu ada halaman baru setiap waktu. Semoga
-                            bermanfaat.
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                         </p>
                         <a class="button-blog-index" href="{{url('blog')}}" 
                         >Masuk Ke Blog</a> 

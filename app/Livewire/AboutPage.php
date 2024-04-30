@@ -29,8 +29,8 @@ class AboutPage extends Component
     public function getProfile()
     {
         $user = User::where('role', 'admin')->first();
-        $this->profile_image = $user->profile_photo_filename;
-        $logo = ApplicationSettings::first()->logo_filename;
+        $this->profile_image = $user->profile_photo_filename ?? "";
+        $logo = ApplicationSettings::first()->logo_filename ?? "";
         $this->logo_filename = $logo;
     }
 

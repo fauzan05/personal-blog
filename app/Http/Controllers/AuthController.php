@@ -2,20 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\UserRoleEnum;
-use App\Http\Requests\UserGuestRegisterRequest;
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegisterRequest;
-use App\Http\Requests\UserUpdatePasswordRequest;
-use App\Http\Requests\UserUpdateRequest;
-use App\Models\Post;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -29,7 +18,7 @@ class AuthController extends Controller
         $search = $request->query('search', null);
         if(!$search) {
             $image = User::select('profile_photo_filename')->first();
-            return view('app.index', ['image_profile' => $image->profile_photo_filename]);
+            return view('app.index', ['image_profile' => $image->profile_photo_filename ?? ""]);
         }
         // jika search ada, maka cari postingan
         return view('app.search', ['current_search_keyword' => trim($search)]);

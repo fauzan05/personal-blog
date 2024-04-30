@@ -9,14 +9,9 @@ use App\Models\Menu;
 use App\Models\Post;
 use App\Models\Tag;
 use Carbon\Carbon;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\Attributes\On;
@@ -202,7 +197,6 @@ class AdminPost extends Component
 
     public function post()
     {
-        // $selected_address = null;
         Validator::make(
             ['title' => $this->title],
             ['title' => 'required|string|max:50'],
@@ -221,33 +215,20 @@ class AdminPost extends Component
         if (empty($this->categories)) {
             Validator::make(['selected_category' => $this->selected_category], ['selected_category' => 'required|integer'], ['required' => 'Postingan wajib memiliki kategori, jika tidak ada buat terlebih dahulu'])->validate();
         }
-        // if (empty($this->addresses)) {
-        //     $this->createLocationState = true;
-        //     Validator::make(['custom_address' => $this->custom_address], ['custom_address' => 'required|string'], ['required' => 'Postingan wajib memiliki alamat, jika tidak ada buat terlebih dahulu'])->validate();
-        // }
-        // $this->validate();
-        // Validator::make(['selected_address' => $this->selected_address], ['selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
 
-        // // mencari id address pada property selected_address, setelah itu dibuat menjadi string
-        // if (!$this->createLocationState) {
-        //     $selected_address = '';
-        //     foreach ($this->addresses as $key => $address) :
-        //         if ($address['id'] == $this->selected_address) {
-        //             $selected_address = $address['province'] . ', ' . $address['country'];
-        //         }
-        //     endforeach;
-        // }
         // memindahkan file dari temp ke images
         $images_filename = [];
-        $pattern = '/src="http:\/\/127.0.0.1:8000\/temp\/([^"]+)"/';
+        // jika menggunakan 127.0.0.1, maka ganti localhost menjadi 127.0.0.1
+        $pattern = '/src="http:\/\/localhost:8000\/temp\/([^"]+)"/';
         if (preg_match_all($pattern, $this->body, $matches)) {
             $images_filename = $matches;
         }
+
         foreach ($images_filename as $key => $image_filename) :
             if ($key === 1) {
                 foreach ($image_filename as $item) :
                     // $image_path = public_path('temp/' . $item);
-                    File::move(public_path('temp/' . $item), public_path('assets/images/' . $item));
+                    File::move(public_path('/temp/' . $item), public_path('/assets/images/' . $item));
                 endforeach;
             }
         endforeach;
@@ -278,17 +259,6 @@ class AdminPost extends Component
                 'tag_id' => $tag
             ]);
         endforeach;
-
-        // // File Image Upload
-        // $response = json_decode($response->body(), JSON_OBJECT_AS_ARRAY);
-        // $post_id = $response['data'][0]['id'];
-        // $path = $this->image->getRealPath();
-        // $originalName = $this->image->getClientOriginalName();
-        // $response = Http::attach('image_file', file_get_contents($path), $originalName)
-        //     ->withHeaders($this->headers)
-        //     ->post($this->api_address . 'media', [
-        //         'post_id' => $post_id,
-        //     ]);
 
         // File Image Upload #2
         $type = $this->image->extension();
@@ -543,27 +513,9 @@ class AdminPost extends Component
 
     public function editPost()
     {
-        // dd($this->body_update);
-        //    dd($this->update_current_category);
-        // dd(array_keys($this->selected_post['tag']), array_keys($this->update_current_tag));
-        // $selected_tag_filter = array_filter($this->update_current_tag, function ($var) {
-        //     return $var != false;
-        // });
-        // dd(array_keys($selected_tag_filter));
         if (!$this->selected_post_id) {
             return session()->now('post_title_conflict', ['message' => 'Pilih Postingan Terlebih Dahulu']);
         }
-        // dd($this->update_current_address);
-        // dd(
-        //     $this->selected_post_id,
-        //     $this->update_title,
-        //     $this->body_update,
-        //     $this->current_image,
-        //     $this->update_current_category,
-        //     $this->update_current_tag,
-        //     $this->update_current_address
-        // );
-
 
         Validator::make(
             ['update_title' => $this->update_title],
@@ -580,37 +532,10 @@ class AdminPost extends Component
             Validator::make(['update_current_category' => $this->update_current_category], ['update_current_category' => 'required|integer'], ['required' => 'Postingan wajib memiliki kategori, jika tidak ada buat terlebih dahulu'])->validate();
         }
 
-
-        // // membuat lokasi custom
-        // if (empty($this->addresses)) {
-        //     $this->createLocationState = true;
-        //     Validator::make(['update_current_address' => $this->update_current_address], ['update_current_address' => 'required|string'], ['required' => 'Postingan wajib memiliki alamat, jika tidak ada buat terlebih dahulu'])->validate();
-        // }
-        // membuat lokasi berdasarkan list alamat yang ada di radio button
-        // if (!empty($this->update_selected_address)) {
-        //     Validator::make(['update_selected_address' => $this->update_selected_address], ['update_selected_address' => $this->createLocationState ? 'nullable|integer' : 'required|integer'])->validate();
-        //     $selected_address = $this->update_custom_address;
-        // }
-        // jika user tidak mengisi manual dan lebih memilih daftar alamat yang tersedia di radio button
-        // akan mencari id address pada property selected_address, setelah itu dibuat menjadi string
-        // if (!$this->createLocationState) {
-        //     // dd($this->update_selected_address, $this->addresses);
-        //     if(!empty($this->update_selected_address)) {
-        //         $selected_address = '';
-        //         foreach ($this->addresses as $key => $address) :
-        //             if ($address['id'] == $this->update_selected_address) {
-        //                 $selected_address = $address['province'] . ', ' . $address['country'];
-        //             }
-        //         endforeach;
-        //     }else{
-        //         $selected_address = $this->update_custom_address;
-        //     }
-            
-        // }
-
         // memindahkan file dari temp ke images
         $images_filename = [];
-        $pattern = '/src="http:\/\/127.0.0.1:8000\/temp\/([^"]+)"/';
+        // jika menggunakan 127.0.0.1, maka ganti localhost menjadi 127.0.0.1
+        $pattern = '/src="http:\/\/localhost:8000\/temp\/([^"]+)"/';
         if (preg_match_all($pattern, $this->body_update, $matches)) {
             $images_filename = $matches;
         }

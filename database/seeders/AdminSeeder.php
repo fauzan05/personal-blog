@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Enum\UserRoleEnum;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,7 +14,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::create([
+        User::create([
             'first_name' => 'Admin',
             'last_name' => 'Admin',
             'username' => 'Admin',

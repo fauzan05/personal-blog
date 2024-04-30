@@ -6,16 +6,11 @@ use App\Models\Address;
 use App\Models\ApplicationSettings;
 use App\Models\Menu;
 use App\Models\SocialMedia;
-use App\Models\User;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Support\Facades\Cookie;
+use App\Models\User;;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -149,13 +144,13 @@ class AdminSetting extends Component
     {
 
         Validator::make(['old_password' => $this->old_password], ['old_password' => 'required|string'])->validate();
+        if (!$this->user || !Hash::check($this->old_password, $this->user['password'])) {
+            return session()->now('status_error', ['message' => 'Password Lama Salah', 'color' => 'danger']);
+        }
         $profile_filename = null;
         if (!empty($this->update_profile_image)) {
             $profile_filename = $this->update_profile_image->hashName();
             File::move($this->update_profile_image->getRealPath(), public_path('assets/user-profile-image/' . $profile_filename));
-        }
-        if (!$this->user || !Hash::check($this->old_password, $this->user['password'])) {
-            return session()->now('status_error', ['message' => 'Password Lama Salah', 'color' => 'danger']);
         }
         $user = User::find($this->user['id']);
         $user->first_name = !trim($this->first_name) ? $user->first_name : trim($this->first_name);
