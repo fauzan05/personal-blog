@@ -25,7 +25,7 @@ class AuthController extends Controller
   
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
         return redirect('/login-admin')->with('status', 'Sesi anda telah habis! Silahkan login kembali');
