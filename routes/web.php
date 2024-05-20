@@ -52,8 +52,6 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/admin/logout', function (Request $request) {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         Cookie::expire('admin');
         return redirect('/login-admin')->with('status', 'Sesi anda telah habis! Silahkan login kembali');
     });
