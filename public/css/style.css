@@ -451,6 +451,10 @@ body.dark {
     color: var(--navbar-text-color);
 }
 
+body.dark .main-navbar{
+    background-color: var(--navbar-color);
+}
+
 body.dark .sun {
     opacity: 0;
     /* bottom: 10px; */
@@ -1408,8 +1412,6 @@ footer ul li a {
 .send-verification-code-button:hover .spinner-send-email {
     color: red;
 }
-
-
 
 .send-verification-code-button:disabled:hover {
     border: none;

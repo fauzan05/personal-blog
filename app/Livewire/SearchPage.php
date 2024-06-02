@@ -45,10 +45,10 @@ class SearchPage extends Component
             $created_at_sort_by_date = Carbon::parse($post['created_at'])->setTimezone('Asia/Jakarta')->format('F Y'); // membuat format untuk pencarian postingan berdasarkan bulan dan tahun
             $comments_count = count(Comment::where('post_id', $post['id'])->get()->toArray());
             $image = Media::select('name')->where('post_id', $post['id'])->first()->name;
-             // menghapus semua karakter html
-             $filter_content = strip_tags($post['content']);
-             $filter_content  = html_entity_decode($filter_content);
-             $filter_content = htmlspecialchars(preg_replace('/\s+/u', ' ', $filter_content));
+            // menghapus semua karakter html
+            $filter_content = strip_tags($post['content']);
+            $filter_content = html_entity_decode($filter_content);
+            $filter_content = htmlspecialchars(preg_replace('/\s+/u', ' ', $filter_content));
             return [
                 'id' => $post['id'],
                 'title' => $post['title'],
@@ -94,10 +94,14 @@ class SearchPage extends Component
             $created_at_sort_by_date = Carbon::parse($post['created_at'])->setTimezone('Asia/Jakarta')->format('F Y'); // membuat format untuk pencarian postingan berdasarkan bulan dan tahun
             $comments_count = count(Comment::where('post_id', $post['id'])->get()->toArray());
             $image = Media::select('name')->where('post_id', $post['id'])->first()->name;
+            // menghapus semua karakter html
+            $filter_content = strip_tags($post['content']);
+            $filter_content = html_entity_decode($filter_content);
+            $filter_content = htmlspecialchars(preg_replace('/\s+/u', ' ', $filter_content));
             return [
                 'id' => $post['id'],
                 'title' => $post['title'],
-                'content' => $post['content'],
+                'content' => $filter_content,
                 'slug' => $post['slug'],
                 'image' => $image,
                 'total_comments' => $comments_count,

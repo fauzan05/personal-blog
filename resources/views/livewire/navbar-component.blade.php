@@ -40,7 +40,6 @@
         aria-label=".form-control-sm example"
          >
     </div>
-    
     <div class="sidebar" style="left: {{$show_sidebar_state ? '40% !important;' : '100% !important;'}}">
         <div class="mt-3 dark-mode-wrapper-sidebar" style="height: auto; width: 80%">
             <div id="dark-mode-switch-sidebar" class="">
