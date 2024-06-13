@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{asset('fontawesome-free-6.4.2-web/css/all.css')}}">
     <link rel="stylesheet" href="{{asset('css/imagestyle.css')}}">
     <link rel="stylesheet" href="{{asset('css/codestyle.css')}}">
-    
+    <link rel="icon" href="{{ asset('assets/logo/' . $logo_filename ?? "") }}" type="image/png, image/jpeg, image,jpg">
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

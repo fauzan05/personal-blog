@@ -10,6 +10,12 @@ use App\Models\Post;
 class MenuController extends Controller
 {
     public $title_blog;
+    public $logo_filename;
+
+    public function __construct()
+    {
+        $this->logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename;
+    }
 
     public function getTitleBlog()
     {
@@ -20,18 +26,18 @@ class MenuController extends Controller
        
         $this->getTitleBlog();
         if (trim(strtolower($mainpath)) === 'about') {
-            return view('app.about');
+            return view('app.about', ['logo_filename' => $this->logo_filename]);
         }
         if ($mainpath && !$secondpath) {
             $is_menu = Menu::select('id', 'name')->where('name', $mainpath)->first();
             if ($is_menu) {
                 // dd($menu->id);
-                return view('app.home', ['title_blog' => $this->title_blog, 'current_menu_id' => $is_menu->id, 'current_menu_name' => $is_menu->name]);
+                return view('app.home', ['title_blog' => $this->title_blog, 'current_menu_id' => $is_menu->id, 'current_menu_name' => $is_menu->name, 'logo_filename' => $this->logo_filename]);
             }
             if (!$is_menu) {
                 $is_post = Post::select('id', 'title')->where('slug', $mainpath)->first();
                 if ($is_post) {
-                    return view('app.content', ['title_blog' => $this->title_blog, 'title_post' => $is_post->title, 'post_id' => $is_post->id]);
+                    return view('app.content', ['title_blog' => $this->title_blog, 'title_post' => $is_post->title, 'post_id' => $is_post->id, 'logo_filename' => $this->logo_filename]);
                 }
                 // return view('notfound');
             }
@@ -44,7 +50,8 @@ class MenuController extends Controller
                     return view('app.categories', [
                         'current_menu_id' => $is_menu->id,
                         'current_category_name' => $is_category->name, 'current_category_id' => $is_category->id,
-                        'selected_month' => null, 'selected_year' => null
+                        'selected_month' => null, 'selected_year' => null,
+                        'logo_filename' => $this->logo_filename
                     ]);
                 }
             }
@@ -58,20 +65,22 @@ class MenuController extends Controller
                     return view('app.categories', [
                         'current_menu_id' => $is_menu->id,
                         'current_category_name' => $is_category->name, 'current_category_id' => $is_category->id,
-                        'selected_month' => null, 'selected_year' => null
+                        'selected_month' => null, 'selected_year' => null,
+                        'logo_filename' => $this->logo_filename
                     ]);
                 }elseif(!$is_category) {
                     if($secondpath == 'tag') {
                         $show_tags_by_menu = $is_menu->posts;
                         foreach($show_tags_by_menu as $post):
                             foreach($post->tags as $tag):
-                                $all_tags [] = $tag->name;
+                                // $all_tags [] = $tag->name;
                                 // Jika postingan yang memiliki tag yang sesuai dengan $thirdpath 
                                 if(strtolower($tag->name) == strtolower($thirdpath)) {
                                     return view('app.tags', [
                                         'current_menu_id' => $is_menu->id,
                                         'current_tag_name' => $thirdpath,
-                                        'current_tag_id' => $tag->id
+                                        'current_tag_id' => $tag->id,
+                                        'logo_filename' => $this->logo_filename
                                     ]);
                                 }
                             endforeach;
@@ -92,13 +101,14 @@ class MenuController extends Controller
                     if ($post_is_exist) {
                         return view('app.categories', [
                             'current_menu_id' => $is_menu->id, 'current_category_name' => $is_category->name,
-                            'current_category_id' => $is_category->id, 'selected_month' => $thirdpath, 'selected_year' => $fourthpath
+                            'current_category_id' => $is_category->id, 'selected_month' => $thirdpath, 'selected_year' => $fourthpath,
+                            'logo_filename' => $this->logo_filename
                         ]);
                     }
                 }
             }
         }
 
-        return view('notfound');
+        return view('notfound', ['logo_filename' => $this->logo_filename]);
     }
 }

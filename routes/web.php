@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
+use App\Models\ApplicationSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -38,17 +39,18 @@ Route::post('image-upload', function (Request $request) {
 
 Route::get('/login-admin', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth')->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('dashboards.admin.home');
+    $logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename ?? "";
+    Route::get('/admin/dashboard', function () use($logo_filename) {
+        return view('dashboards.admin.home', ['logo_filename' => $logo_filename]);
     });
-    Route::get('/admin/posts', function () {
-        return view('dashboards.admin.post');
+    Route::get('/admin/posts', function () use($logo_filename) {
+        return view('dashboards.admin.post', ['logo_filename' => $logo_filename]);
     });
-    Route::get('/admin/settings', function () {
-        return view('dashboards.admin.setting');
+    Route::get('/admin/settings', function () use($logo_filename) {
+        return view('dashboards.admin.setting', ['logo_filename' => $logo_filename]);
     });
-    Route::get('/admin/about', function () {
-        return view('dashboards.admin.about');
+    Route::get('/admin/about', function () use($logo_filename) {
+        return view('dashboards.admin.about', ['logo_filename' => $logo_filename]);
     });
     Route::get('/admin/logout', function (Request $request) {
         Auth::logout();
@@ -58,7 +60,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/forgot-password', function () {
-    return view('app.forgot-password');
+    $logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename ?? "";
+    return view('app.forgot-password', ['logo_filename', $logo_filename]);
 });
 
 // Route::get('/{mainpath}/{secondpath?}', function (string $mainpath, string $secondpath = null) {

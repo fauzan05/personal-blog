@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{asset('bootstrap-5.3.2-dist/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('fontawesome-free-6.4.2-web/css/all.css')}}">
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
+    <link rel="icon" href="{{ asset('assets/logo/' . $logo_filename ?? "") }}" type="image/png, image/jpeg, image,jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
