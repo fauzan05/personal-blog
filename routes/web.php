@@ -38,6 +38,7 @@ Route::post('image-upload', function (Request $request) {
 })->name('ckeditor.upload');
 
 Route::get('/login-admin', [AuthController::class, 'login'])->name('login');
+// Jika tabel belum di migrate, sebaiknya komentar semua blok kode dari sini karena error tabel application_settings tidak ditemukan
 Route::middleware('auth')->group(function () {
     $logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename ?? "";
     Route::get('/admin/dashboard', function () use($logo_filename) {

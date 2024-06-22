@@ -50,9 +50,7 @@
                                 </div>
                             </div>
                             <div class="content-card-wrapper my-3">
-                                <span class="mt-2 content-card">
-                                    {{$post['content']}}
-                                </span>
+                                    {!! $post['content'] !!}
                             </div>
                             <div class="card-post-footer my-3">
                                 <div id="inputHelp" class="form-text" style="font-size: 0.7rem">

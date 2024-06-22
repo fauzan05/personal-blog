@@ -13,7 +13,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename;
+        $this->logo_filename = ApplicationSettings::select('logo_filename')->first()->logo_filename ?? "Untitled";
     }
     public function login()
     {

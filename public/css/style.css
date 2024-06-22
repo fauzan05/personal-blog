@@ -1157,13 +1157,28 @@ footer ul li a {
     color: var(--text-icon-color);
 }
 
-
 .content-card-wrapper {
     height: 100px !important;
     width: 80% !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    /* white-space: nowrap; */
+    font-size: 0.8rem;
     /* white-space: nowrap !important; */
+    color: #a9b1bc !important;
+}
+
+.content-card-wrapper p{
+    color: #a9b1bc;
+}
+
+.content-card-wrapper h1,
+.content-card-wrapper h2,
+.content-card-wrapper h3,
+.content-card-wrapper h4,
+.content-card-wrapper h5,
+.content-card-wrapper h6{
+    font-size: 0.8rem;
 }
 
 .title-about {
