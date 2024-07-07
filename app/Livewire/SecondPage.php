@@ -58,9 +58,9 @@ class SecondPage extends Component
             $comments_count = count(Comment::where('post_id', $post['id'])->get()->toArray());
             $image = optional(Media::select('name')->where('post_id', $post['id'])->first())->name;
             // menghapus semua karakter html
-            $filter_content = str_replace('&nbsp;', '', $post['content']);
-            // $filter_content  = html_entity_decode($filter_content);
-            // $filter_content = htmlspecialchars(preg_replace('/\s+/u', ' ', $filter_content));
+            $filter_content = strip_tags($post['content']);
+            $filter_content = html_entity_decode($filter_content);
+            $filter_content = htmlspecialchars(preg_replace('/\s+/u', ' ', $filter_content));
            
             return [
                 'id' => $post['id'],
